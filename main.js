@@ -20,13 +20,16 @@ const getWeather = () => {
     $url = apiLink + $city + apiKey + apiUnits;
 
     axios.get($url).then(response => {
-        console.log(response.data.main);
         const temp = Math.round(response.data.main.temp);
         const tempFeels = Math.round(response.data.main.feels_like);
+        const status = Object.assign({}, ...response.data.weather)//obiekt z postaci ({}) (bo taką dawało response.data.weather) za pomocą ... został rozsmarowany do pierwszego pustego obiektu i teraz mam dostęp do poszczególnych indeksów
 
         cityName.textContent = response.data.name;
+        weather.textContent = status.main;
         temperature.textContent = temp + '°C';
         feels.textContent = tempFeels + '°C';
+
+
     });
 }
 
