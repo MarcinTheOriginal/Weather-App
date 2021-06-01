@@ -13,11 +13,19 @@ const apiLink = 'https://api.openweathermap.org/data/2.5/weather?q=';
 const apiKey = '&appid=976496ddd59a03609dd2d3e707c4c831';
 const apiUnits = '&units=metric';
 
+const $defaultCity = 'Konin';
 let $city;
 let $url;
 
 const getWeather = () => {
-    $city = input.value;
+
+    //zapobiega powrotowi do domyślnego miasta po wybraniu "wyślij" z pustym inputem
+    if (input.value === '') {
+        if (cityName.textContent === '') $city = $defaultCity;
+        else $city = cityName.textContent;
+    } else $city = input.value;
+
+    //$city = (input.value) ? input.value : $city = $defaultCity;
     $url = apiLink + $city + apiKey + apiUnits;
 
     axios.get($url).then(response => {
@@ -29,8 +37,6 @@ const getWeather = () => {
         weather.textContent = status.main;
         temperature.textContent = temp + '°C';
         feels.textContent = tempFeels + '°C';
-
-        console.log(status.id);
 
         if (status.id >= 200 && status.id <300)
             photo.setAttribute("src", "WeatherApp grafiki/thunderstorm.png")
@@ -46,9 +52,19 @@ const getWeather = () => {
             photo.setAttribute("src", "WeatherApp grafiki/cloud.png")
         else 
             photo.setAttribute("src", "WeatherApp grafiki/unknown.png")
-        
-    });
-}
 
+        warning.textContent = '';
+        input.value = '';
+
+    }).catch(() => warning.textContent = "Wpisz poprawną nazwę miasta.");
+};
+
+const checkEnter = (e) => {
+    if(e.keyCode === 13) {
+        getWeather();
+    }
+};
+
+getWeather();
 btn.addEventListener('click', getWeather);
-
+input.addEventListener('keyup', checkEnter);
